@@ -3,6 +3,20 @@ def parse_input(user_input):
     cmd = cmd.strip().lower()
     return cmd, args
 
+def input_error(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except ValueError:
+            return "Give me name and phone please."
+        except KeyError as e:
+            return f"Error: Key '{e.args[0]}' does not exist."
+        except IndexError:
+            return "Error: Insufficient arguments."
+
+    return inner
+
+@input_error
 def add_contact(args, contacts):
     if len(args) == 2:
         name, phone = args
@@ -11,6 +25,7 @@ def add_contact(args, contacts):
     else:
         return "Invalid command format for adding a contact."
 
+@input_error
 def change_contact(args, contacts):
     if len(args) == 2:
         name, phone = args
@@ -22,6 +37,7 @@ def change_contact(args, contacts):
     else:
         return "Invalid command format for changing a contact's phone number."
 
+@input_error
 def get_phone(args, contacts):
     if len(args) == 1:
         name = args[0]
@@ -32,6 +48,7 @@ def get_phone(args, contacts):
     else:
         return "Invalid command format for retrieving a phone number."
 
+@input_error
 def display_all(contacts):
     if contacts:
         result = "All contacts:\n"
